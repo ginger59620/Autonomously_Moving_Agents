@@ -93,6 +93,19 @@ public class Bot : MonoBehaviour
         Seek(info.point + chosenDir.normalized * 5);
     }
 
+    bool CanSeeTrget()
+    {
+        RaycastHit raycastInfo;
+        Vector3 rayToTarget = target.transform.position - this.transform.position;
+
+        if(Physics.Raycast(this.transform.position, rayToTarget, out raycastInfo))
+        {
+            if (raycastInfo.transform.gameObject.tag == "cop")
+                return true;
+        }
+        return false;
+
+    }
     // Update is called once per frame
     void Update()
     {
@@ -101,6 +114,7 @@ public class Bot : MonoBehaviour
         //Persue();
         //Evade();
         //Wander();
+        if(CanSeeTrget())
         CleverHide();
     }
 }
