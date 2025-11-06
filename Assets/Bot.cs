@@ -63,10 +63,12 @@ public class Bot : MonoBehaviour
 
         Seek(targetWorld);
     }
-    void Hide()
+    void CleverHide()
     {
         float dist = Mathf.Infinity;
         Vector3 choseSpot = Vector3.zero;
+        Vector3 chosenDir = Vector3.zero;
+        GameObject chosenGO = World.Instance.GetHidingSpots()[0];
 
         for(int i = 0; i < World.Instance.GetHidingSpots().Length; i++)
         {
@@ -76,10 +78,19 @@ public class Bot : MonoBehaviour
             if(Vector3.Distance(this.transform.position, hidePos) < dist)
             {
                 choseSpot = hidePos;
+                chosenDir = hideDir;
+                chosenGO = World.Instance.GetHidingSpots()[i];
                 dist = Vector3.Distance(this.transform.position, hidePos);
             }
         }
-        Seek(choseSpot);
+
+        Collider hideCol = chosenGO.GetComponent<Collider>();
+        Ray backRay = new Ray(choseSpot, -chosenDir.normalized);
+        RaycastHit info;
+        float distance = 100.0f;
+        hideCol.Raycast(backRay, out info, distance);
+
+        Seek(info.point + chosenDir.normalized * 5);
     }
 
     // Update is called once per frame
@@ -90,6 +101,6 @@ public class Bot : MonoBehaviour
         //Persue();
         //Evade();
         //Wander();
-        Hide();
+        CleverHide();
     }
 }
